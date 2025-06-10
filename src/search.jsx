@@ -3,10 +3,15 @@ import React, {useState} from 'react';
 function search() {
 
     const [searchParams, setSearchParams] = useState({
-        dateStart: '',
-        dateEnd: '',
-        cameraType: '',
-        imageId: '',
+        obs_id: '',
+        start_time: '',
+        end_time: '',
+        lat_from: '',
+        lat_to: '',
+        lon_from: '',
+        lon_to: '',
+        camera: '',
+        date: '',
     });
 
     const [results, setResults] = useState([]);
@@ -20,10 +25,45 @@ function search() {
     };
 
     const handleSearch = () => {
+        const baseUrl = 'http://localhost:8081/images';
+
+        const queryString = Object.entries(searchParams)
+            .filter(([_, value]) => value)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
+
+        const fullUrl = `${baseUrl}?${queryString}`;
+
+        console.log(`Fetching data from: ${fullUrl}`);
+
         const simulatedResults = [
-            {dateStart: searchParams.dateStart, dateEnd: searchParams.dateEnd, cameraType: searchParams.cameraType, imageId: searchParams.imageId },
+            {obs_id: searchParams.obs_id, start_time: searchParams.start_time, end_time: searchParams.end_time,
+            lat_from: searchParams.lat_from, lat_to: searchParams.lat_to, lon_from: searchParams.lon_from, lon_to: searchParams.lon_to,
+            camera: searchParams.camera, date: searchParams.date},
         ];
         setResults(simulatedResults)
+
+        fetch(fullUrl)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob(); // Get the response as a Blob
+            })
+            .then((blob) => {
+                // Create a download link for the ZIP file
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data.zip'; // Set the desired file name
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url); // Clean up the URL object
+            })
+            .catch((error) => {
+                console.error('Error fetching ZIP file:', error);
+            });
     }
 
     return(
@@ -31,38 +71,75 @@ function search() {
             <h2>Search Parameters</h2>
             <form>
                 <label>
-                    Date Start:
+                    Observation ID:
                     <input
-                        type="date"
-                        name="dateStart"
-                        value={searchParams.dateStart}
+                        name="obs_id"
+                        value={searchParams.obs_id}
                         onChange={handleInputChange}
                     />
                 </label>
                 <label>
-                    Date End:
+                    Start Time:
                     <input
-                        type="date"
-                        name="dateEnd"
-                        value={searchParams.dateEnd}
+                        name="start_time"
+                        value={searchParams.start_time}
+                        onChange={handleInputChange}
+                    />
+                </label>
+                <label>
+                    End Time:
+                    <input
+                        name="end_time"
+                        value={searchParams.end_time}
+                        onChange={handleInputChange}
+                    />
+                </label>
+                <label>
+                    Latitude From:
+                    <input
+                        name="lat_from"
+                        value={searchParams.lat_from}
+                        onChange={handleInputChange}
+                    />
+                </label>
+                <label>
+                    Latitude To:
+                    <input
+                        name="lat_to"
+                        value={searchParams.lat_to}
+                        onChange={handleInputChange}
+                    />
+                </label>
+                <label>
+                    Longitude From:
+                    <input
+                        name="lon_from"
+                        value={searchParams.lon_from}
+                        onChange={handleInputChange}
+                    />
+                </label>
+                <label>
+                    Longitude To:
+                    <input
+                        name="lon_to"
+                        value={searchParams.lon_to}
                         onChange={handleInputChange}
                     />
                 </label>
                 <label>
                     Camera Type:
                     <input
-                        type="text"
-                        name="cameraType"
-                        value={searchParams.cameraType}
+                        name="camera"
+                        value={searchParams.camera}
                         onChange={handleInputChange}
                     />
                 </label>
                 <label>
-                    Image ID:
+                    Date:
                     <input
-                        type="text"
-                        name="imageId"
-                        value={searchParams.imageId}
+                        type="date"
+                        name="date"
+                        value={searchParams.date}
                         onChange={handleInputChange}
                     />
                 </label>
@@ -71,24 +148,34 @@ function search() {
                 </button>
             </form>
 
-            <h3>Search Results</h3>
+            <h3>Search Parameters Received</h3>
             {results.length > 0 && (
                 <table border="1">
                     <thead>
                         <tr>
-                            <th>Date Start</th>
-                            <th>Date End</th>
-                            <th>Camera Type</th>
-                            <th>Image ID</th>
+                            <th>observation ID</th>
+                            <th>start time</th>
+                            <th>end time</th>
+                            <th>lat from</th>
+                            <th>lat to</th>
+                            <th>lon from</th>
+                            <th>lon to</th>
+                            <th>camera type</th>
+                            <th>date</th>
                         </tr>
                     </thead>
                     <tbody>
                         {results.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.dateStart}</td>
-                                <td>{result.dateEnd}</td>
-                                <td>{result.cameraType}</td>
-                                <td>{result.imageId}</td>
+                                <td>{result.obs_id}</td>
+                                <td>{result.start_time}</td>
+                                <td>{result.end_time}</td>
+                                <td>{result.lat_from}</td>
+                                <td>{result.lat_to}</td>
+                                <td>{result.lon_from}</td>
+                                <td>{result.lon_to}</td>
+                                <td>{result.camera}</td>
+                                <td>{result.date}</td>
                             </tr>
                         ))}
                     </tbody>
