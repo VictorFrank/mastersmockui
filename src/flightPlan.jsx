@@ -39,7 +39,7 @@ const CreateFlightPlanForm = () => {
         formData.append("flightPlan", JSON.stringify(flightPlan));
 
         try {
-            const response = await fetch("http://localhost:8081/flightPlan", {
+            const response = await fetch("http://localhost:8080/flightPlan", {
                 method: "POST",
                 body: formData,
             });
