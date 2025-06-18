@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 
 const CreateFlightPlanForm = () => {
     const [flightPlanName, setFlightPlanName] = useState('');
-    const [satelliteId, setSatelliteId] = useState('');
+    const [userId, setUserId] = useState(1);
+    const [missionId, setMissionId] = useState(2);
     const [requests, setRequests] = useState([
-        { target: '', startTime: '', endTime: '', camera: '', lat: '', lon: '' },
+        { id: 0, o_type: "" },
     ]);
+
+
+
 
     const handleRequestChange = (index, field, value) => {
         const updated = [...requests];
@@ -14,7 +18,7 @@ const CreateFlightPlanForm = () => {
     };
 
     const addObservationRequest = () => {
-        setRequests([...requests, { target: '', startTime: '', endTime: '', camera: '', lat: '', lon: '' }]);
+        setRequests([...requests, { id: 0, o_type: "" }]);
     };
 
     const handleSubmit = async (e) => {
@@ -22,22 +26,14 @@ const CreateFlightPlanForm = () => {
 
         const flightPlan = {
             name: flightPlanName,
-            satelliteId,
-            observationRequests: requests.map(req => ({
-                target: req.target,
-                startTime: parseInt(req.startTime),
-                endTime: parseInt(req.endTime),
-                camera: req.camera,
-                coordinates: {
-                    lat: parseFloat(req.lat),
-                    lon: parseFloat(req.lon),
-                },
-            })),
+            user_id: userId,
+            mission_id: missionId,
+            observation_requests: requests
         };
 
         const formData = new FormData();
+        console.log(JSON.stringify(flightPlan))
         formData.append("flightPlan", JSON.stringify(flightPlan));
-
         try {
             const response = await fetch("http://localhost:8080/flightPlan", {
                 method: "POST",
@@ -64,36 +60,24 @@ const CreateFlightPlanForm = () => {
             </label>
 
             <label>
-                Satellite ID:
-                <input value={satelliteId} onChange={(e) => setSatelliteId(e.target.value)} required />
+                User ID:
+                <input type="number" value={userId} onChange={(e) => setUserId(parseInt(e.target.value))} required />
+            </label>
+            <label>
+                Mission Id:
+                <input type="number" value={missionId} onChange={(e) => setMissionId(parseInt(e.target.value))} required />
             </label>
 
             <h3>Observation Requests</h3>
             {requests.map((req, index) => (
                 <div key={index} className="request-block">
                     <label>
-                        Target:
-                        <input value={req.target} onChange={(e) => handleRequestChange(index, 'target', e.target.value)} required />
+                        Observation request id:
+                        <input type="number" value={req.target} onChange={(e) => handleRequestChange(index, 'id', parseInt(e.target.value))} required />
                     </label>
                     <label>
-                        Start Time (Unix):
-                        <input type="number" value={req.startTime} onChange={(e) => handleRequestChange(index, 'startTime', e.target.value)} required />
-                    </label>
-                    <label>
-                        End Time (Unix):
-                        <input type="number" value={req.endTime} onChange={(e) => handleRequestChange(index, 'endTime', e.target.value)} required />
-                    </label>
-                    <label>
-                        Camera:
-                        <input value={req.camera} onChange={(e) => handleRequestChange(index, 'camera', e.target.value)} required />
-                    </label>
-                    <label>
-                        Latitude:
-                        <input type="number" value={req.lat} onChange={(e) => handleRequestChange(index, 'lat', e.target.value)} required />
-                    </label>
-                    <label>
-                        Longitude:
-                        <input type="number" value={req.lon} onChange={(e) => handleRequestChange(index, 'lon', e.target.value)} required />
+                        Observation Type:
+                        <input type="text" value={req.startTime} onChange={(e) => handleRequestChange(index, 'o_type', e.target.value)} required />
                     </label>
                 </div>
             ))}
