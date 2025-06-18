@@ -18,7 +18,7 @@ function Ingest() {
 
             if (file.type === 'application/zip') {
                 const formData = new FormData();
-                formData.append('file', file);
+                formData.append('batch', file);
 
                 fetch('http://localhost:8080/batch', {
                     method: 'POST',
