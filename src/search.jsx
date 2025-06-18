@@ -12,6 +12,7 @@ function search() {
         lon_to: '',
         camera: '',
         date: '',
+        dist_from: ''
     });
 
     const [results, setResults] = useState([]);
@@ -95,23 +96,23 @@ function search() {
                     />
                 </label>
                 <label>
-                    Latitude From:
+                    Latitude:
                     <input
                         name="lat_from"
                         value={searchParams.lat_from}
                         onChange={handleInputChange}
                     />
                 </label>
+                {/*<label>*/}
+                {/*    Latitude To:*/}
+                {/*    <input*/}
+                {/*        name="lat_to"*/}
+                {/*        value={searchParams.lat_to}*/}
+                {/*        onChange={handleInputChange}*/}
+                {/*    />*/}
+                {/*</label>*/}
                 <label>
-                    Latitude To:
-                    <input
-                        name="lat_to"
-                        value={searchParams.lat_to}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <label>
-                    Longitude From:
+                    Longitude:
                     <input
                         name="lon_from"
                         value={searchParams.lon_from}
@@ -119,13 +120,21 @@ function search() {
                     />
                 </label>
                 <label>
-                    Longitude To:
+                    Within (Meters):
                     <input
-                        name="lon_to"
-                        value={searchParams.lon_to}
+                        name="dist_from"
+                        value={searchParams.dist_from}
                         onChange={handleInputChange}
                     />
                 </label>
+                {/*<label>*/}
+                {/*    Longitude To:*/}
+                {/*    <input*/}
+                {/*        name="lon_to"*/}
+                {/*        value={searchParams.lon_to}*/}
+                {/*        onChange={handleInputChange}*/}
+                {/*    />*/}
+                {/*</label>*/}
                 <label>
                     Camera Type:
                     <input
